@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/pion/webrtc/v4"
@@ -40,6 +41,7 @@ func SignalHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := peerConnection.SetRemoteDescription(offer); err != nil {
+		fmt.Println(err)
 		http.Error(w, "Failed to set remote description", http.StatusInternalServerError)
 		return
 	}

@@ -1,8 +1,10 @@
 package main
 
 import (
-	"github.com/pion/webrtc/v3"
 	"log"
+	"net/http"
+
+	"github.com/BeauRussell/GoVideoPlayer/server"
 )
 
 func main() {

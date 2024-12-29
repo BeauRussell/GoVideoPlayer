@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Video Player</title>
+	</head>
+	<body>
+		<h1>Video Player</h1>
+		<button id="start-stream">Start Stream</button>
+		<video id="webrtc-video" autoplay playsinline controls></video>
+
+		<script>
+			const videoElement = document.getElementById('webrtc-video');
+			const startButton = document.getElementById('start-stream');
+			let peerConnection;
+
+			startButton.addEventListener('click', playStream())
+
+			async function playStream() {
+				startButton.disabled = true;
+				peerConnection = new RTCPeerConnection();
+
+				peerConnection.ontrack = (event) => {
+					videoElement.srcObject = event.streams[0];
+				}
+
+				const offer = await peerConnection.createOffer();
+				await peerConnection.setLocalDescription(offer);
+
+				const response = await fetch('/signal', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(peerConnection.localDescription),
+				});
+
+				const answer = await response.json();
+				await peerConnection.setRemoteDescription(answer);
+			}
+		</script>
+	</body>
+</html>
