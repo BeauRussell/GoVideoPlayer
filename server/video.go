@@ -4,14 +4,14 @@ import (
 	"log"
 	"time"
 
+	"github.com/BeauRussell/GoVideoPlayer/videoEncoding"
 	"github.com/pion/webrtc/v4"
 	"github.com/pion/webrtc/v4/pkg/media"
 )
 
 func SendVideoFrames(videoTrack *webrtc.TrackLocalStaticSample) {
-	for {
-		frame := []byte{}
-
+	frames := videoEncoding.SplitVideoToFrames()
+	for _, frame := range frames {
 		err := videoTrack.WriteSample(media.Sample{
 			Data:     frame,
 			Duration: time.Second / 30,
