@@ -20,7 +20,32 @@ func SignalHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	peerConnection, err := webrtc.NewPeerConnection(webrtc.Configuration{})
+	fmt.Printf("Received SDP offer: %s\n", offer.SDP)
+
+	peerConnection, err := webrtc.NewPeerConnection(webrtc.Configuration{
+		ICEServers: []webrtc.ICEServer{
+			{
+				URLs:       []string{"turn:global.relay.metered.ca:80"},
+				Username:   "",
+				Credential: "",
+			},
+			{
+				URLs:       []string{"turn:global.relay.metered.ca:80?transport=tcp"},
+				Username:   "",
+				Credential: "",
+			},
+			{
+				URLs:       []string{"turn:global.relay.metered.ca:443"},
+				Username:   "",
+				Credential: "",
+			},
+			{
+				URLs:       []string{"turns:global.relay.metered.ca:443?transport=tcp"},
+				Username:   "",
+				Credential: "",
+			},
+		},
+	})
 	if err != nil {
 		http.Error(w, "Failed to create peer connection", http.StatusInternalServerError)
 		return
